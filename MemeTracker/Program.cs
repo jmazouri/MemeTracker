@@ -13,7 +13,13 @@ namespace MemeTracker
     {
         static void Main(string[] args)
         {
-            var client = new DiscordClient();
+            var client = new DiscordClient(new DiscordClientConfig
+            {
+                VoiceMode = DiscordVoiceMode.Outgoing,
+                EnableVoiceMultiserver = false,
+                EnableVoiceEncryption = true,
+                AckMessages = true
+            });
 
             client.LogMessage += (s, e) =>
             {
@@ -38,7 +44,7 @@ namespace MemeTracker
                     await DatabaseContainer.Current.StoreMessage(convertedMessage);
                 }
 
-                string result = await CommandHandler.HandleCommand(convertedMessage);
+                string result = await CommandHandler.HandleCommand(client, convertedMessage);
 
                 if (result != null)
                 {
